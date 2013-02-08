@@ -2,8 +2,6 @@ package de.inue.tkplaner;
 
 import java.util.ArrayList;
 
-import de.sanyok.tkplaner.R;
-
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.FragmentManager;
@@ -150,6 +148,10 @@ public class InitActivity
         
     }
 
+	public ArrayList<String> getPlayers(){
+		return null;
+	}
+	
 	@Override
 	/** Called when the player set radio button changes selection*/
 	public void onCheckedChanged(RadioGroup playerset, int arg1) {

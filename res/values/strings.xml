@@ -1,5 +1,26 @@
 <resources>
 
-    <string name="app_name">TK Planer</string>
+    <string name="app_name">TK_Planer</string>
+    
+    <string name="menu_settings">Settings</string>
+    <string name="playerset_inue">INÜ Spieler</string>
+    <string name="playerset_other">Andere Spieler</string>
+    <string name="name_hint">Namen eingeben</string>
+    <string name="init_startbutton">Starten</string>
+    <string name="game_firstplayer">Ersten Spieler wählen!</string>
+    <string name="error_title">Fehler!</string>
+    <string name="error_dummy">Some error occurred!</string>
+    <string name="error_not_enough_players">Mindestens vier Spieler benötigt!</string>
 
+    <string-array name="inue_players">
+        <item>Alex</item>
+        <item>David</item>
+        <item>Jessi</item>
+        <item>Klaus</item>
+        <item>Michi</item>
+        <item>Shine</item>
+        <item>Thomas</item>
+    </string-array>
+
+    <string name="title_activity_spielverlauf">Spielverlauf</string>
 </resources>

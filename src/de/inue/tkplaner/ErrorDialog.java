@@ -3,7 +3,6 @@
  */
 package de.inue.tkplaner;
 
-import de.sanyok.tkplaner.R;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;

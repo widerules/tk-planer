@@ -1,6 +1,6 @@
 package de.inue.tkplaner;
 
-import de.sanyok.tkplaner.R;
+
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.Menu;
