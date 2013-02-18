@@ -16,6 +16,7 @@ public class GameProcessActivity extends Activity {
 	
 	private String[] playedCombinations;
 	private ArrayList<String> allPlayers;
+	private String[] selectableNames;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +36,27 @@ public class GameProcessActivity extends Activity {
 	public void choosePair(View view){
 		FragmentManager fm = getFragmentManager();
         PairChoiceDialog choiceDialog = new PairChoiceDialog();
-        
         choiceDialog.show(fm, null);
+        System.out.println("Dialog shown...");
+	}
+	
+	public void onPairChosen(SparseBooleanArray checkedPositions){
+	//TODO: safety check of array length + number of selected items
+	    String name1, name2;
+	    boolean first_found;
+	    
+	    for(int i=0; (i<checkedPositions.size() && i<selectableNames.length); i++){
+	        
+	        if(checkedPositions.get(i) && !first_found){
+	            name1 = selectableNames[i];
+                System.out.println("User selected 1: " + name1);
+            }else if(checkedPositions.get(i) && first_found){
+                name2 = selectableNames[i];
+                System.out.println("User selected 2: " + name2);
+            }
+	    }
+	    
+	    
 	}
 	
 	/*
