@@ -7,10 +7,12 @@
     <string name="playerset_other">Andere Spieler</string>
     <string name="name_hint">Namen eingeben</string>
     <string name="init_startbutton">Starten</string>
-    <string name="game_firstplayer">Ersten Spieler wählen!</string>
+    <string name="game_firstplayer">Erst Spieler wählen!</string>
     <string name="error_title">Fehler!</string>
     <string name="error_dummy">Some error occurred!</string>
     <string name="error_not_enough_players">Mindestens vier Spieler benötigt!</string>
+    <string name="game_add_combination">Spielerpaar wählen</string>
+    
 
     <string-array name="inue_players">
         <item>Alex</item>

@@ -18,7 +18,7 @@ import android.widget.TableRow;
 public class InitActivity 
 	extends Activity implements RadioGroup.OnCheckedChangeListener{
 
-	public final static String EXTRA_NAME = "de.sanyok.firstapp.PLAYERNAME";
+	public final static String EXTRA_NAME = "de.sanyok.firstapp.PLAYERNAMES";
 	
 	private ArrayList<String> players;
 	private CheckBox[] activePlayers;
@@ -76,9 +76,7 @@ public class InitActivity
 			this.players.clear();
 		}else{
 			Intent intent = new Intent(this, GameProcessActivity.class);
-	    	for(int i=0; i<this.players.size(); i++){
-	    		intent.putExtra(EXTRA_NAME, this.players.get(i));
-	    	}
+			intent.putStringArrayListExtra(EXTRA_NAME, players);
 	    	
 	    	startActivity(intent);
 		}
@@ -141,16 +139,12 @@ public class InitActivity
         try {
 			Thread.sleep(100);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
         errorDialog.setMessage(message);
         
     }
 
-	public ArrayList<String> getPlayers(){
-		return null;
-	}
 	
 	@Override
 	/** Called when the player set radio button changes selection*/
@@ -158,6 +152,9 @@ public class InitActivity
 		this.fillPlayerNames(playerset);
 	}
 	
+	/*
+	 * Didn't change anything in this generated method 
+	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
