@@ -33,7 +33,7 @@ public class GameProcessActivity extends Activity {
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		Intent intent = getIntent();
 		this.allPlayers = intent.getStringArrayListExtra(InitActivity.EXTRA_NAME);
-		System.out.println("Got " + this.allPlayers.size() + "players");
+		System.out.println("Got " + this.allPlayers.size() + " players");
 		this.selectableNames = (ArrayList<String>) allPlayers.clone();
 		this.playedCombinations = new ArrayList<String>();
 		this.criticalGame = (this.allPlayers.size()==5)?true:false;
@@ -44,7 +44,9 @@ public class GameProcessActivity extends Activity {
 	 */
 	public void choosePair(View view){
 		FragmentManager fm = getFragmentManager();
-        PairChoiceDialog choiceDialog = new PairChoiceDialog(selectableNames);
+        PairChoiceDialog choiceDialog = 
+        		new PairChoiceDialog(this.selectableNames, 
+        							 this.playedCombinations);
         choiceDialog.show(fm, null);
         System.out.println("Dialog shown...");
 	}
@@ -117,7 +119,12 @@ public class GameProcessActivity extends Activity {
 	    		this.selectableNames = (ArrayList<String>) allPlayers.clone();
 	    	}
 	    }
-	    System.out.println("Current content of played combinations: \n" + this.playedCombinations.toArray());
+	    for(int i = 0; i < this.playedCombinations.size(); i++)
+	    {
+	    	System.out.println("played combinations (" +i+ "): " 
+	    						+ this.playedCombinations.get(i));
+	    }
+	    
 	}
 	
 	/*
