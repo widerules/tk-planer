@@ -15,20 +15,49 @@ public class PairChoiceDialog extends DialogFragment implements DialogInterface.
     private ArrayList<String> combinations;
     private Dialog thisDialog;
     
-    public PairChoiceDialog(ArrayList<String> selectableNames, 
-    						ArrayList<String> playedCombinations){
-        super();
-        System.out.println("Creating PairChoiceDialog. Got " + selectableNames + " players");
-        this.names = selectableNames;
-        this.combinations = playedCombinations;
-        
+    /*
+     * Default constructor
+     */
+    public PairChoiceDialog(){
+    	super();
     }
+    
+    /*
+     * Singleton instance using default constructor
+     */
+    public static PairChoiceDialog createPairChoiceDialog(ArrayList<String> selectableNames, 
+			ArrayList<String> playedCombinations){
+    	PairChoiceDialog f = new PairChoiceDialog();
+    	
+    	// Supply input as an argument.
+    	System.out.println("Creating PairChoiceDialog. Got " + selectableNames + " players");
+        Bundle args = new Bundle();
+        args.putStringArrayList("names", selectableNames);
+        args.putStringArrayList("combinations", playedCombinations);
+        f.setArguments(args);
+    	
+    	return f;
+    }
+    
+    
+//    public PairChoiceDialog(ArrayList<String> selectableNames, 
+//    						ArrayList<String> playedCombinations){
+//        super();
+//        System.out.println("Creating PairChoiceDialog. Got " + selectableNames + " players");
+//        this.names = selectableNames;
+//        this.combinations = playedCombinations;
+//        
+//    }
     
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-
+    	super.onCreateDialog(savedInstanceState);
         // put list of possible players into the dialog
         //does not work yet!
+    	
+    	
+    	this.names = getArguments().getStringArrayList("names");
+    	this.combinations = getArguments().getStringArrayList("combinations");
 
     	// create an array:
     	String[] names_array = new String[this.names.size()];
@@ -82,12 +111,15 @@ public class PairChoiceDialog extends DialogFragment implements DialogInterface.
 										+ this.combinations);
 					throw new NoSuchElementException("Something is wrong with the list");
 				}
+				System.out.println("Found partner: " + partner);
+				System.out.println("This view: " + this.getView());
+				System.out.println("This focus: " + this.getDialog().getCurrentFocus());
 				for(int j = 0; i<this.names.size(); i++){
 					if(this.names.get(j).equals(partner)){
 						System.out.println("This view: " + this.getView());
 					}
 				}
 			}
-		}
-	}
+		} // finished partner selection
+	} // end onClick
 }

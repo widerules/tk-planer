@@ -45,8 +45,8 @@ public class GameProcessActivity extends Activity {
 	public void choosePair(View view){
 		FragmentManager fm = getFragmentManager();
         PairChoiceDialog choiceDialog = 
-        		new PairChoiceDialog(this.selectableNames, 
-        							 this.playedCombinations);
+        		PairChoiceDialog.createPairChoiceDialog(selectableNames, 
+        												playedCombinations);
         choiceDialog.show(fm, null);
         System.out.println("Dialog shown...");
 	}
