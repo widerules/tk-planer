@@ -8,6 +8,8 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.CheckedTextView;
 import android.widget.ListView;
 
 public class PairChoiceDialog extends DialogFragment implements DialogInterface.OnMultiChoiceClickListener{
@@ -15,6 +17,8 @@ public class PairChoiceDialog extends DialogFragment implements DialogInterface.
     private ArrayList<String> names;
     private ArrayList<String> combinations;
     private Dialog thisDialog;
+    private boolean[] selectedPlayers;
+    private boolean[] deactivatedPlayers;
     
     /*
      * Default constructor
@@ -59,7 +63,9 @@ public class PairChoiceDialog extends DialogFragment implements DialogInterface.
     	
     	this.names = getArguments().getStringArrayList("names");
     	this.combinations = getArguments().getStringArrayList("combinations");
-
+    	this.selectedPlayers = new boolean[this.names.size()];
+    	this.deactivatedPlayers = new boolean[this.names.size()];
+    	
     	// create an array:
     	String[] names_array = new String[this.names.size()];
     	for(int i=0; i<names_array.length; i++){
@@ -92,15 +98,24 @@ public class PairChoiceDialog extends DialogFragment implements DialogInterface.
 		String checkedName = this.names.get(which);
 		System.out.println("Dialog: Some name selected: index " 
 				+ which+ " (" +checkedName+ "), checked="+checked);
-		if(!checked)
+		ListView displayedList = (ListView)this.getDialog().getCurrentFocus();
+		CheckedTextView currentName = null;
+		if(!checked){
+			// re-activate previous partners
+			for(int i=0; i<displayedList.getChildCount(); i++){
+				currentName = (CheckedTextView)displayedList.getChildAt(i);
+				currentName.setVisibility(View.VISIBLE);
+			}
+			this.selectedPlayers[which] = false;
 			return;
-		
+		}
+		this.selectedPlayers[which] = true;
 		// disable played combinations (if any available):
 		String partner = "";
 		for(int i = 0; i < this.combinations.size(); i++){
 			
 			if(this.combinations.get(i).equals(checkedName)){
-				// This player already played, disable this option!
+				// This player already played, disable hisw partner!
 				if((i%2 == 0) && i < (this.combinations.size() - 1)){
 					// This player was on the left: combination is at i+1
 					partner = this.combinations.get(i+1);
@@ -115,14 +130,17 @@ public class PairChoiceDialog extends DialogFragment implements DialogInterface.
 				System.out.println("Found partner: " + partner);
 				System.out.println("This view: " + this.getView());
 				System.out.println("This focus: " + this.getDialog().getCurrentFocus());
-				ListView displayedList = (ListView)this.getDialog().getCurrentFocus();
-				System.out.println("This List" + displayedList);
-				for(int j = 0; i<this.names.size(); i++){
-					if(this.names.get(j).equals(partner)){
-						System.out.println("This view: " + this.getView());
-					}
-				}
-			}
-		} // finished partner selection
+				System.out.println("This List " + displayedList.getChildCount());
+				for(int j = 0; j<displayedList.getChildCount(); j++){
+					currentName = (CheckedTextView)displayedList.getChildAt(j);
+					System.out.println("child at " + j + ": " +displayedList.getChildAt(j));
+					if(currentName.getText().equals(partner)){
+						System.out.println("Now do something with " + partner);
+						currentName.setVisibility(View.INVISIBLE);
+						currentName.setChecked(false);
+					} // partner disabled
+				} // finished disabling previous partners.
+			} // finished handling of selected player who already had a partner
+		} // finished looking for partners
 	} // end onClick
 }
