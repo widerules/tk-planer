@@ -8,6 +8,7 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.widget.ListView;
 
 public class PairChoiceDialog extends DialogFragment implements DialogInterface.OnMultiChoiceClickListener{
 
@@ -114,6 +115,8 @@ public class PairChoiceDialog extends DialogFragment implements DialogInterface.
 				System.out.println("Found partner: " + partner);
 				System.out.println("This view: " + this.getView());
 				System.out.println("This focus: " + this.getDialog().getCurrentFocus());
+				ListView displayedList = (ListView)this.getDialog().getCurrentFocus();
+				System.out.println("This List" + displayedList);
 				for(int j = 0; i<this.names.size(); i++){
 					if(this.names.get(j).equals(partner)){
 						System.out.println("This view: " + this.getView());
