@@ -57,6 +57,10 @@ public class GameProcessActivity extends Activity {
 	    int index1=-1, index2=-1;
 	    boolean first_found = false;
 	    System.out.println("Checked " + checkedPositions.size() + " players");
+	    if(checkedPositions.size() != 2){
+	    	System.out.println("Not a pair chosen! Dismissing...");
+	    	return;
+	    }
 	    //i<checkedPositions.size() && 
 	    for(int i=0; (i<selectableNames.size()); i++){
 	        System.out.println(i+": selected="+checkedPositions.get(i));

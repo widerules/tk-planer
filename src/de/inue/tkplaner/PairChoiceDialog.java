@@ -2,6 +2,7 @@ package de.inue.tkplaner;
 
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
+import java.util.zip.Checksum;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -109,6 +110,18 @@ public class PairChoiceDialog extends DialogFragment implements DialogInterface.
 			this.selectedPlayers[which] = false;
 			return;
 		}
+		int checkedFields = 0;
+		for(int i=0; i<displayedList.getChildCount(); i++){
+			currentName = (CheckedTextView)displayedList.getChildAt(i);
+			if(currentName.isChecked()) checkedFields++;
+		}
+		System.out.println("Already checked: "+ checkedFields);
+		if(checkedFields >= 1){
+			// team is already complete, ignore this selection 'till some name is unselected
+			this.selectedPlayers[which] = false;
+			((CheckedTextView)displayedList.getChildAt(which)).setChecked(false);
+			return;
+		}
 		this.selectedPlayers[which] = true;
 		// disable played combinations (if any available):
 		String partner = "";
@@ -135,9 +148,10 @@ public class PairChoiceDialog extends DialogFragment implements DialogInterface.
 					currentName = (CheckedTextView)displayedList.getChildAt(j);
 					System.out.println("child at " + j + ": " +displayedList.getChildAt(j));
 					if(currentName.getText().equals(partner)){
+						// found the entry to be disabled
 						System.out.println("Now do something with " + partner);
 						currentName.setVisibility(View.INVISIBLE);
-						currentName.setChecked(false);
+						currentName.setChecked(false); // disabled partner will not play
 					} // partner disabled
 				} // finished disabling previous partners.
 			} // finished handling of selected player who already had a partner
