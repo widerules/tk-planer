@@ -20,6 +20,10 @@ public class InitActivity
 
 	public final static String EXTRA_NAME = "de.sanyok.firstapp.PLAYERNAMES";
 	
+	/* 
+	 * Here, no management is needed, so use list and let next activity create
+	 * Player objects of it
+	 */
 	private ArrayList<String> players;
 	private CheckBox[] activePlayers;
 	
@@ -85,6 +89,7 @@ public class InitActivity
 //		this.activePlayers;
 //		Intent intent = new Intent(this, GameProcessActivity.class);
 	}
+
 	
 	private void fillPlayerNames(View view) {
 		// Fill INUE players if layout choses this player set on startup:
@@ -120,7 +125,7 @@ public class InitActivity
 				currentTextLine = (EditText) currentRow.getChildAt(1);
 				// fill in the name:
 				currentTextLine.setText("");
-				// disable editing:
+				// enable editing:
 				currentTextLine.setEnabled(true);
 				// System.out.println("PlayerNo_" + i + ": "+
 				// this.activePlayers[i]);
