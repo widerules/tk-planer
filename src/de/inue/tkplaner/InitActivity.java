@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.CheckBox;
@@ -42,7 +43,7 @@ public class InitActivity
 		this.activePlayers = new CheckBox[maxNumberPlayers];
 		TableRow currentRow = null;
 		for(int i=0; i<this.activePlayers.length; i++){
-			currentRow = (TableRow)playersTable.getChildAt(i);
+			currentRow = (TableRow)(playersTable.getChildAt(i));
 			this.activePlayers[i] = (CheckBox)currentRow.getChildAt(0);
 			//System.out.println("PlayerNo_" + i + ": "+ this.activePlayers[i]);
 		}
@@ -69,14 +70,16 @@ public class InitActivity
 			}
 		}
 		if(this.players.size() < 4){
-			System.out.println("Chosen " + this.players.size() 
+//		    System.out.println("Chosen " + this.players.size() 
+//                  + " players. Need at least 4!");
+			Log.w("Init", "Chosen " + this.players.size() 
 					+ " players. Need at least 4!");
 
 			Resources res = getResources();
 			String message = "" + res.getString(R.string.error_not_enough_players) 
 					+ " Input: " + this.players.size();
 
-			showErrorDialog(message);
+			//showErrorDialog(message);
 			this.players.clear();
 		}else{
 			Intent intent = new Intent(this, GameProcessActivity.class);
@@ -106,11 +109,16 @@ public class InitActivity
 			
 			TableRow currentRow = null;
 			EditText currentTextLine = null;
-			for (int i = 0; (i < this.activePlayers.length && i < inuePlayerNames.length); i++) {
-				currentRow = (TableRow) playersTable.getChildAt(i);
-				currentTextLine = (EditText) currentRow.getChildAt(1);
-				// fill in the name:
-				currentTextLine.setText(inuePlayerNames[i]);
+			for (int i = 0; (i < this.activePlayers.length); i++) {
+			    currentRow = (TableRow) playersTable.getChildAt(i);
+                currentTextLine = (EditText) currentRow.getChildAt(1);
+			    if(i < inuePlayerNames.length){
+    				
+    				// fill in the name:
+    				currentTextLine.setText(inuePlayerNames[i]);
+			    }else{
+			        Log.d("Init", "Empty player line");
+			    }
 				// disable editing:
 				currentTextLine.setEnabled(false);
 				// uncheck the box:

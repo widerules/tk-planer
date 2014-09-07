@@ -3,6 +3,7 @@ package de.inue.tkplaner;
 
 import java.util.ArrayList;
 
+import de.inue.tkplaner.PairChoiceDialog.PairDiaLogListener;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.FragmentManager;
@@ -14,10 +15,9 @@ import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
-public class GameProcessActivity extends Activity {
+public class GameProcessActivity extends Activity 
+                                 implements PairDiaLogListener{
 	
 	//private ArrayList<String> playedCombinations;
 	private ArrayList<Player> allPlayers;
@@ -40,10 +40,13 @@ public class GameProcessActivity extends Activity {
 		for(int i=0; i<playersStringList.size(); i++){
 			this.allPlayers.add(new Player(playersStringList.get(i)));
 		}
-		Log.i("GameProcess", "Got " + this.allPlayers.size() + " players");
+//		System.out.println("Got " + this.allPlayers.size() + " players");
+		Log.d("GameProcess", "Got " + this.allPlayers.size() + " players");
 		this.selectablePlayers = (ArrayList<Player>) allPlayers.clone();
 		//this.playedCombinations = new ArrayList<String>();
 		this.criticalGame = (this.allPlayers.size()==5)?true:false;
+		Log.i("GameProcess", 
+		        this.criticalGame?"Critical game!":"Noncritical game.");
 	}
 	
 	/**
