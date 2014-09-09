@@ -13,13 +13,15 @@ import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CheckedTextView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
-public class PairChoiceDialog extends DialogFragment {
+public class PairChoiceDialog extends DialogFragment implements OnClickListener {
 
 	/**
 	 * 
@@ -28,7 +30,7 @@ public class PairChoiceDialog extends DialogFragment {
     /* The parent activity must implement this interface to receive feedback
      * from this dialog. */
     public interface PairDiaLogListener{
-        void onPairChosen(SparseBooleanArray checkedPositions);
+        void onPairChosen(boolean[] selectedPlayers);
     }
 	
 	private LinearLayout choiceList;
@@ -36,7 +38,6 @@ public class PairChoiceDialog extends DialogFragment {
 	private PairDiaLogListener mListener;
     private ArrayList<String> names;
     //private ArrayList<String> combinations;
-    private Dialog thisDialog;
     private boolean[] selectedPlayers;
     private boolean[] deactivatedPlayers;
 	
@@ -84,6 +85,9 @@ public class PairChoiceDialog extends DialogFragment {
     		this.choiceList.addView(currentPlayer);
     		
     	}
+    	Button confirmButton = (Button) topLevelView
+    				.findViewById(R.id.button_choice);
+    	confirmButton.setOnClickListener(this);
     	
     	this.topLevelView.requestLayout();
         return this.topLevelView;
@@ -101,6 +105,7 @@ public class PairChoiceDialog extends DialogFragment {
     						+ selectablePlayers);
     	ArrayList<String> selectableNames = new ArrayList<String>();
     	//copy the names of given players into an arraylist to be shown:
+    	// TODO: Pass Player objects to prevent repeating groups 
     	for(int i = 0; i<selectablePlayers.size(); i++){
     		selectableNames.add(((Player)selectablePlayers.get(i)).getName());
     	}
@@ -112,7 +117,7 @@ public class PairChoiceDialog extends DialogFragment {
     	return f;
 	}
 	
-	// Override the Fragment.onAttach() method to instantiate the NoticeDialogListener
+	// Override the Fragment.onAttach() method to instantiate the PairDiaLogLIstener
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -127,13 +132,26 @@ public class PairChoiceDialog extends DialogFragment {
         }
     }
 
-	/* TODO: Register this method for callback. Not working yet
+	/* 
 	 * TODO: Extract the players pair and pass to parent activity
 	 * TODO: Check that exactly 2 players are selected 
 	 * */
-	public void applyPair(View view){
-	    Log.i("Dialog", "Apply pair");
-	    mListener.onPairChosen(null);
+	@Override
+	public void onClick(View Button) {
+		Log.d("Dialog", "onClick: Apply pair");
+		int nSelectedPlayers = 0;
+		for(int i = 0; i < this.choiceList.getChildCount(); i++){
+			
+			if(((CheckBox)this.choiceList.getChildAt(i)).isChecked()){
+				this.selectedPlayers[i] = true;
+				nSelectedPlayers += 1;
+			}else{
+				this.selectedPlayers[i] = false;
+			}
+		}
+		if(nSelectedPlayers == 2){
+			mListener.onPairChosen(this.selectedPlayers);
+			dismiss();
+		}
 	}
-
 }

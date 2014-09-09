@@ -24,6 +24,10 @@ public class Player {
 		return result;
 	}
 
+	public void newTeam(Player otherPlayer){
+		this.prevPartners.add(otherPlayer);
+	}
+	
 	public String getName() {
 		return this.name;
 	}

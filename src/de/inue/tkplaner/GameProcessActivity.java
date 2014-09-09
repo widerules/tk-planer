@@ -15,6 +15,8 @@ import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 public class GameProcessActivity extends Activity 
                                  implements PairDiaLogListener{
@@ -60,13 +62,86 @@ public class GameProcessActivity extends Activity
         Log.i("GameProcess", "Dialog shown...");
 	}
 	
-	public void onPairChosen(SparseBooleanArray checkedPositions){
+	public void onPairChosen(boolean[] checkedPositions){
+		Log.d("GameProcess", "Checked " + checkedPositions.length + " players");
+		Player p1 = null, p2 = null;
+		int index1 = -1, index2 = -1;
+		for(int i = 0; i < checkedPositions.length; i++){
+			if(checkedPositions[i]){
+				if(p1 == null){
+					p1 = this.selectablePlayers.get(i);
+					Log.i("GameProcess", "i = " + i + ": Checked P1: " + p1);
+					index1 = i;
+				}else{
+					//p1 already initialized, now p2's turn
+					p2 = this.selectablePlayers.get(i);
+					Log.i("GameProcess", "i = " + i + ": Checked P2: " + p2);
+					index2 = i;
+				}
+				
+			}
+		}
+		// make a team of selected players
+		p1.newTeam(p2);
+		p2.newTeam(p1);
+		
+		LinearLayout gamesTable = (LinearLayout) findViewById(R.id.gamesTable);
+		TextView currentLine;
+	    CharSequence currentText;
+	    
+	    if(this.pairsChosen == 0){
+	    	// this will be first entry in the line
+	    	this.pairsChosen++;
+	    	currentText = p1.getName()+"+"+p2.getName()+":";
+	    	Log.d("GameProcess", "will display " + currentText);
+	    	//get correct row:
+	    	if(this.gamesPlayed == 0){
+	    		// first row is initialized
+	    		currentLine = (TextView)(gamesTable.getChildAt(this.gamesPlayed));
+	    		gamesTable.removeViewAt(this.gamesPlayed);
+	    		
+	    	}else{
+	    		// create the object for current row:
+	    		currentLine = new TextView(this);
+	    		
+	    	}
+	    	//fill the textview with text:
+	    	currentLine.setText(currentText);
+	    	// add textview to the table:
+	    	gamesTable.addView(currentLine);
+	    	currentLine.setVisibility(View.VISIBLE);
+//	    	this.playedCombinations.add(name1);
+//	    	this.playedCombinations.add(name2);
+	    	this.selectablePlayers.remove(index2); //remove higher index first
+	    	this.selectablePlayers.remove(index1);
+    	
+	    }else{
+	    	// current line already exists and has to be extended.
+	    	currentLine = (TextView)(gamesTable.getChildAt(this.gamesPlayed));
+	    	currentText = currentLine.getText();
+	    	currentText = currentText + p1.getName()+"+"+p2.getName();
+	    	currentLine.setText(currentText);
+//	    	this.playedCombinations.add(name1);
+//	    	this.playedCombinations.add(name2);
+	    	this.gamesPlayed++;
+	    	this.pairsChosen = 0;
+	    	System.out.println("Critical Game? " + this.criticalGame);
+	    	if(!this.criticalGame){
+	    		// in the next game every combination can be played again
+	    		this.selectablePlayers = (ArrayList<Player>) allPlayers.clone();
+	    	}
+	    }
+//	    for(int i = 0; i < this.playedCombinations.size(); i++){
+//	    	System.out.println("played combinations (" +i+ "): " 
+//	    						+ this.playedCombinations.get(i));
+//	    }
+	    
 //		Player name1="";
 //		//TODO: safety check of array length + number of selected items
 //	    String name2="";
 //	    int index1=-1, index2=-1;
 //	    boolean first_found = false;
-		Log.i("GameProcess", "Checked " + checkedPositions.size() + " players");
+//		
 //	    if(checkedPositions.size() != 2){
 //	    	System.out.println("Not a pair chosen! Dismissing...");
 //	    	return;
@@ -138,7 +213,7 @@ public class GameProcessActivity extends Activity
 //	    	System.out.println("played combinations (" +i+ "): " 
 //	    						+ this.playedCombinations.get(i));
 //	    }
-//	    
+	    
 	}
 	
 	/*
