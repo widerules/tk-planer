@@ -62,23 +62,23 @@ public class GameProcessActivity extends Activity
         Log.i("GameProcess", "Dialog shown...");
 	}
 	
-	public void onPairChosen(boolean[] checkedPositions){
-		Log.d("GameProcess", "Checked " + checkedPositions.length + " players");
+	public void onPairChosen(boolean[] checkedPositionsLeft, 
+	                         boolean[] checkedPositionsRight){
+		Log.d("GameProcess", "Checked " + checkedPositionsLeft.length + " players");
 		Player p1 = null, p2 = null;
 		int index1 = -1, index2 = -1;
-		for(int i = 0; i < checkedPositions.length; i++){
-			if(checkedPositions[i]){
+		for(int i = 0; i < checkedPositionsLeft.length; i++){
+			if(checkedPositionsLeft[i]){
 				if(p1 == null){
 					p1 = this.selectablePlayers.get(i);
-					Log.i("GameProcess", "i = " + i + ": Checked P1: " + p1);
+					Log.i("GameProcess", "i = " + i + "(left): Checked P1: " + p1);
 					index1 = i;
 				}else{
 					//p1 already initialized, now p2's turn
 					p2 = this.selectablePlayers.get(i);
-					Log.i("GameProcess", "i = " + i + ": Checked P2: " + p2);
+					Log.i("GameProcess", "i = " + i + "(left): Checked P2: " + p2);
 					index2 = i;
 				}
-				
 			}
 		}
 		// make a team of selected players
@@ -88,49 +88,58 @@ public class GameProcessActivity extends Activity
 		LinearLayout gamesTable = (LinearLayout) findViewById(R.id.gamesTable);
 		TextView currentLine;
 	    CharSequence currentText;
-	    
-	    if(this.pairsChosen == 0){
-	    	// this will be first entry in the line
-	    	this.pairsChosen++;
-	    	currentText = p1.getName()+"+"+p2.getName()+":";
-	    	Log.d("GameProcess", "will display " + currentText);
-	    	//get correct row:
-	    	if(this.gamesPlayed == 0){
-	    		// first row is initialized
-	    		currentLine = (TextView)(gamesTable.getChildAt(this.gamesPlayed));
-	    		gamesTable.removeViewAt(this.gamesPlayed);
-	    		
-	    	}else{
-	    		// create the object for current row:
-	    		currentLine = new TextView(this);
-	    		
-	    	}
-	    	//fill the textview with text:
-	    	currentLine.setText(currentText);
-	    	// add textview to the table:
-	    	gamesTable.addView(currentLine);
-	    	currentLine.setVisibility(View.VISIBLE);
-//	    	this.playedCombinations.add(name1);
-//	    	this.playedCombinations.add(name2);
-	    	this.selectablePlayers.remove(index2); //remove higher index first
-	    	this.selectablePlayers.remove(index1);
+
+	    // this will be first entry in the line
+    	currentText = p1.getName()+"+"+p2.getName()+":";
+    	Log.d("GameProcess", "will display " + currentText);
+    	//get correct row:
+	
+    	if(this.gamesPlayed == 0){
+    		// first row is initialized
+    		currentLine = (TextView)(gamesTable.getChildAt(this.gamesPlayed));
+    		gamesTable.removeViewAt(this.gamesPlayed);
+    	}else{
+    		// create the object for current row:
+    		currentLine = new TextView(this);
+    	}
+
     	
-	    }else{
-	    	// current line already exists and has to be extended.
-	    	currentLine = (TextView)(gamesTable.getChildAt(this.gamesPlayed));
-	    	currentText = currentLine.getText();
-	    	currentText = currentText + p1.getName()+"+"+p2.getName();
-	    	currentLine.setText(currentText);
-//	    	this.playedCombinations.add(name1);
-//	    	this.playedCombinations.add(name2);
-	    	this.gamesPlayed++;
-	    	this.pairsChosen = 0;
-	    	System.out.println("Critical Game? " + this.criticalGame);
-	    	if(!this.criticalGame){
-	    		// in the next game every combination can be played again
-	    		this.selectablePlayers = (ArrayList<Player>) allPlayers.clone();
-	    	}
-	    }
+    	p1 = null; p2 = null;
+        index1 = -1; index2 = -1;
+        for(int i = 0; i < checkedPositionsRight.length; i++){
+            if(checkedPositionsRight[i]){
+                if(p1 == null){
+                    p1 = this.selectablePlayers.get(i);
+                    Log.i("GameProcess", "i = " + i + "(right): Checked P1: " + p1);
+                    index1 = i;
+                }else{
+                    //p1 already initialized, now p2's turn
+                    p2 = this.selectablePlayers.get(i);
+                    Log.i("GameProcess", "i = " + i + "(right): Checked P2: " + p2);
+                    index2 = i;
+                }
+            }
+        }
+        // make a team of selected players
+        p1.newTeam(p2);
+        p2.newTeam(p1);
+    	
+        currentText = currentText + (p1.getName()+"+"+p2.getName());
+    	
+    	//fill the textview with text:
+    	currentLine.setText(currentText);
+    	// add textview to the table:
+    	gamesTable.addView(currentLine);
+    	currentLine.setVisibility(View.VISIBLE);
+    	
+    	this.gamesPlayed++;
+    	System.out.println("Critical Game? " + this.criticalGame);
+        if(!this.criticalGame){
+            // in the next game every combination can be played again
+            this.selectablePlayers = (ArrayList<Player>) allPlayers.clone();
+        }
+    	
+	    	
 //	    for(int i = 0; i < this.playedCombinations.size(); i++){
 //	    	System.out.println("played combinations (" +i+ "): " 
 //	    						+ this.playedCombinations.get(i));
