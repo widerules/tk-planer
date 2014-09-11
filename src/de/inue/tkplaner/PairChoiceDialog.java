@@ -6,22 +6,18 @@ package de.inue.tkplaner;
 import java.util.ArrayList;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.DialogFragment;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CheckedTextView;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 
 public class PairChoiceDialog extends DialogFragment implements
         OnClickListener, OnCheckedChangeListener {
@@ -44,10 +40,10 @@ public class PairChoiceDialog extends DialogFragment implements
     private View topLevelView;
     private PairDiaLogListener mListener;
     private ArrayList<String> names;
+    private ArrayList<Player> players;
     // private ArrayList<String> combinations;
     private boolean[] selectedPlayersLeft;
     private boolean[] selectedPlayersRight;
-    private boolean[] deactivatedPlayers;
 
     public PairChoiceDialog() {
         // Empty constructor required
@@ -78,7 +74,6 @@ public class PairChoiceDialog extends DialogFragment implements
         // getArguments().getStringArrayList("combinations");
         this.selectedPlayersLeft = new boolean[this.names.size()];
         this.selectedPlayersRight = new boolean[this.names.size()];
-        this.deactivatedPlayers = new boolean[this.names.size()];
 
         this.choiceListLeft.removeAllViews();
         this.choiceListRight.removeAllViews();
@@ -87,6 +82,7 @@ public class PairChoiceDialog extends DialogFragment implements
         String[] names_array = new String[this.names.size()];
         CheckBox currentPlayer;
         // CheckedTextView currentPlayer;
+        Log.d("Dialog", "Have players list: " + this.players);
         for (int i = 0; i < names_array.length; i++) {
             // names_array[i] = this.names.get(i);
             Log.d("Dialog", "Adding " + this.names.get(i));
@@ -115,6 +111,7 @@ public class PairChoiceDialog extends DialogFragment implements
             ArrayList<Player> selectablePlayers) {
 
         PairChoiceDialog f = new PairChoiceDialog();
+        f.setPlayers(selectablePlayers);
         // System.out.println("Creating PairChoiceDialog. Got players: \n"
         // + selectablePlayers);
         // Supply input as an argument.
@@ -122,7 +119,7 @@ public class PairChoiceDialog extends DialogFragment implements
                 + selectablePlayers);
         ArrayList<String> selectableNames = new ArrayList<String>();
         // copy the names of given players into an arraylist to be shown:
-        // TODO: Pass Player objects to prevent repeating groups
+        // TODO: Since players are passed via setter method, String list not needed
         for (int i = 0; i < selectablePlayers.size(); i++) {
             selectableNames.add(((Player) selectablePlayers.get(i)).getName());
         }
@@ -132,6 +129,10 @@ public class PairChoiceDialog extends DialogFragment implements
         f.setArguments(args);
 
         return f;
+    }
+    
+    public void setPlayers(ArrayList<Player> players){
+    	this.players = players;
     }
 
     // Override the Fragment.onAttach() method to instantiate the
@@ -184,6 +185,13 @@ public class PairChoiceDialog extends DialogFragment implements
     }
 
     @Override
+    /*
+     * TODO: Ensure that player does not play twice in same team.
+     * 		 Now not yet working: Disabled checkboxes can be reenabled. 
+     * TODO: Take care of critical game process here (Disable choice when needed)  
+     * (non-Javadoc)
+     * @see android.widget.CompoundButton.OnCheckedChangeListener#onCheckedChanged(android.widget.CompoundButton, boolean)
+     */
     public void onCheckedChanged(CompoundButton checkBox, boolean newChecked) {
         LinearLayout boxParent = (LinearLayout) checkBox.getParent();
         LinearLayout horzLayout = (LinearLayout) boxParent.getParent();
@@ -233,10 +241,18 @@ public class PairChoiceDialog extends DialogFragment implements
             }
         } else {
             for (int i = 0; i < boxParent.getChildCount(); i++) {
+            	// this team is not complete. See who can be my partner
                 currentBox = (CheckBox) boxParent.getChildAt(i);
                 if (!ownChecked[i] && !otherChecked[i]) {
+                	// This one is not yet in a team
                     Log.d("Dialog", "Enabling Box " + i);
                     currentBox.setEnabled(true);
+                    // did he play with the just selected player?
+                    if(this.players.get(i).hasPlayedWith(this.players.get(index)) && newChecked){
+                    	// he did => disable!
+                    	Log.d("Dialog", players.get(i) + " has played with " + players.get(index));
+                        currentBox.setEnabled(false);
+                    }
                 }
             }
         }
@@ -246,13 +262,13 @@ public class PairChoiceDialog extends DialogFragment implements
         if (newChecked && otherCheckBox.isEnabled()) {
             // This player was selectable. Disable!
             otherCheckBox.setEnabled(false);
-            Log.d("Dialog", (leftOrRight == 0 ? "Left" : "Right")
+            Log.d("Dialog", (leftOrRight == 1 ? "Left" : "Right")
                     + " column disabled");
         } else if (!newChecked && (otherCheckedNo != 2)) {
             // This player was not selectable but the other team is not complete
             // => Enable!
-            otherCheckBox.setEnabled(true);
-            Log.d("Dialog", (leftOrRight == 0 ? "Left" : "Right")
+        	otherCheckBox.setEnabled(true);
+            Log.d("Dialog", (leftOrRight == 1 ? "Left" : "Right")
                     + " column enabled");
         }
 

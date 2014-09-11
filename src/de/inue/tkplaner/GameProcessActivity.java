@@ -8,10 +8,8 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
-import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,10 +23,11 @@ public class GameProcessActivity extends Activity
 	private ArrayList<Player> allPlayers;
 	//private ArrayList<String> selectableNames;
 	private int gamesPlayed = 0;
-	private int pairsChosen = 0;
+//	private int pairsChosen = 0;
 	private boolean criticalGame = false;
 	private ArrayList<Player> selectablePlayers;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -62,22 +61,23 @@ public class GameProcessActivity extends Activity
         Log.i("GameProcess", "Dialog shown...");
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void onPairChosen(boolean[] checkedPositionsLeft, 
 	                         boolean[] checkedPositionsRight){
 		Log.d("GameProcess", "Checked " + checkedPositionsLeft.length + " players");
 		Player p1 = null, p2 = null;
-		int index1 = -1, index2 = -1;
+//		int index1 = -1, index2 = -1;
 		for(int i = 0; i < checkedPositionsLeft.length; i++){
 			if(checkedPositionsLeft[i]){
 				if(p1 == null){
 					p1 = this.selectablePlayers.get(i);
 					Log.i("GameProcess", "i = " + i + "(left): Checked P1: " + p1);
-					index1 = i;
+//					index1 = i;
 				}else{
 					//p1 already initialized, now p2's turn
 					p2 = this.selectablePlayers.get(i);
 					Log.i("GameProcess", "i = " + i + "(left): Checked P2: " + p2);
-					index2 = i;
+//					index2 = i;
 				}
 			}
 		}
@@ -105,18 +105,18 @@ public class GameProcessActivity extends Activity
 
     	
     	p1 = null; p2 = null;
-        index1 = -1; index2 = -1;
+//        index1 = -1; index2 = -1;
         for(int i = 0; i < checkedPositionsRight.length; i++){
             if(checkedPositionsRight[i]){
                 if(p1 == null){
                     p1 = this.selectablePlayers.get(i);
                     Log.i("GameProcess", "i = " + i + "(right): Checked P1: " + p1);
-                    index1 = i;
+//                    index1 = i;
                 }else{
                     //p1 already initialized, now p2's turn
                     p2 = this.selectablePlayers.get(i);
                     Log.i("GameProcess", "i = " + i + "(right): Checked P2: " + p2);
-                    index2 = i;
+//                    index2 = i;
                 }
             }
         }
@@ -137,92 +137,7 @@ public class GameProcessActivity extends Activity
         if(!this.criticalGame){
             // in the next game every combination can be played again
             this.selectablePlayers = (ArrayList<Player>) allPlayers.clone();
-        }
-    	
-	    	
-//	    for(int i = 0; i < this.playedCombinations.size(); i++){
-//	    	System.out.println("played combinations (" +i+ "): " 
-//	    						+ this.playedCombinations.get(i));
-//	    }
-	    
-//		Player name1="";
-//		//TODO: safety check of array length + number of selected items
-//	    String name2="";
-//	    int index1=-1, index2=-1;
-//	    boolean first_found = false;
-//		
-//	    if(checkedPositions.size() != 2){
-//	    	System.out.println("Not a pair chosen! Dismissing...");
-//	    	return;
-//	    }
-//	    //i<checkedPositions.size() && 
-//	    for(int i=0; (i<selectablePlayers.size()); i++){
-//	        System.out.println(i+": selected="+checkedPositions.get(i));
-//	        if(checkedPositions.get(i) && !first_found){
-//	            name1 = selectablePlayers.get(i);
-//                System.out.println("User selected 1: " + name1.get);
-//                index1 = i;
-//                first_found=true;
-//            }else if(checkedPositions.get(i) && first_found){
-//                name2 = selectablePlayers.get(i);
-//                System.out.println("User selected 2: " + name2);
-//                index2 = i;
-//            }
-//	    }
-//	    //Resources res = getResources();
-//	    LinearLayout gamesTable = (LinearLayout) findViewById(R.id.gamesTable);
-//	    System.out.println("Here the table " + gamesTable + "with " 
-//    							+ gamesTable.getChildCount() + " rows." );
-//	    TextView currentLine;
-//	    CharSequence currentText;
-//	    if(this.pairsChosen == 0){
-//	    	// this will be first entry in the line
-//	    	this.pairsChosen++;
-//	    	currentText = name1+"+"+name2+":";
-//	    	System.out.println("will display " + currentText);
-//	    	//get correct row:
-//	    	if(this.gamesPlayed == 0){
-//	    		// first row is initialized
-//	    		currentLine = (TextView)(gamesTable.getChildAt(this.gamesPlayed));
-//	    		gamesTable.removeViewAt(this.gamesPlayed);
-//	    		
-//	    	}else{
-//	    		// create the object for current row:
-//	    		currentLine = new TextView(this);
-//	    		
-//	    	}
-//	    	//fill the textview with text:
-//	    	currentLine.setText(currentText);
-//	    	// add textview to the table:
-//	    	gamesTable.addView(currentLine);
-//	    	currentLine.setVisibility(View.VISIBLE);
-//	    	this.playedCombinations.add(name1);
-//	    	this.playedCombinations.add(name2);
-//	    	this.selectablePlayers.remove(index2); //remove higher index first
-//	    	this.selectablePlayers.remove(index1);
-//	    	
-//	    }else{
-//	    	// current line already exists and has to be extended.
-//	    	currentLine = (TextView)(gamesTable.getChildAt(this.gamesPlayed));
-//	    	currentText = currentLine.getText();
-//	    	currentText = currentText + name1 + "+" + name2;
-//	    	currentLine.setText(currentText);
-//	    	this.playedCombinations.add(name1);
-//	    	this.playedCombinations.add(name2);
-//	    	this.gamesPlayed++;
-//	    	this.pairsChosen = 0;
-//	    	System.out.println("Critical Game? " + this.criticalGame);
-//	    	if(!this.criticalGame){
-//	    		// in the next game every combination can be played again
-//	    		this.selectablePlayers = (ArrayList<String>) allPlayers.clone();
-//	    	}
-//	    }
-//	    for(int i = 0; i < this.playedCombinations.size(); i++)
-//	    {
-//	    	System.out.println("played combinations (" +i+ "): " 
-//	    						+ this.playedCombinations.get(i));
-//	    }
-	    
+        }	    
 	}
 	
 	/*

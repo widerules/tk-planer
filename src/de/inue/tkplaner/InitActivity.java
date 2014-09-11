@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import android.os.Bundle;
 import android.app.Activity;
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.util.Log;
@@ -75,9 +74,9 @@ public class InitActivity
 			Log.w("Init", "Chosen " + this.players.size() 
 					+ " players. Need at least 4!");
 
-			Resources res = getResources();
-			String message = "" + res.getString(R.string.error_not_enough_players) 
-					+ " Input: " + this.players.size();
+//			Resources res = getResources();
+//			String message = "" + res.getString(R.string.error_not_enough_players) 
+//					+ " Input: " + this.players.size();
 
 			//showErrorDialog(message);
 			this.players.clear();
@@ -145,18 +144,18 @@ public class InitActivity
 		}
 	}
 	
-	private void showErrorDialog(CharSequence message) {
-		FragmentManager fm = getFragmentManager();
-        ErrorDialog errorDialog = new ErrorDialog();
-        errorDialog.show(fm, null);
-        try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-        errorDialog.setMessage(message);
-        
-    }
+//	private void showErrorDialog(CharSequence message) {
+//		FragmentManager fm = getFragmentManager();
+//        ErrorDialog errorDialog = new ErrorDialog();
+//        errorDialog.show(fm, null);
+//        try {
+//			Thread.sleep(100);
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
+//        errorDialog.setMessage(message);
+//        
+//    }
 
 	
 	@Override
