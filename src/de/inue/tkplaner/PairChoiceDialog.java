@@ -44,6 +44,7 @@ public class PairChoiceDialog extends DialogFragment implements
     // private ArrayList<String> combinations;
     private boolean[] selectedPlayersLeft;
     private boolean[] selectedPlayersRight;
+	private boolean criticalGame;
 
     public PairChoiceDialog() {
         // Empty constructor required
@@ -108,10 +109,11 @@ public class PairChoiceDialog extends DialogFragment implements
 
     // , ArrayList<String> playedCombinations
     public static PairChoiceDialog createPairChoiceDialog(
-            ArrayList<Player> selectablePlayers) {
+            ArrayList<Player> selectablePlayers, boolean thirdOfFive) {
 
         PairChoiceDialog f = new PairChoiceDialog();
         f.setPlayers(selectablePlayers);
+        f.setCriticalGame(thirdOfFive);
         // System.out.println("Creating PairChoiceDialog. Got players: \n"
         // + selectablePlayers);
         // Supply input as an argument.
@@ -131,7 +133,11 @@ public class PairChoiceDialog extends DialogFragment implements
         return f;
     }
     
-    public void setPlayers(ArrayList<Player> players){
+    private void setCriticalGame(boolean thirdOfFive) {
+		this.criticalGame = thirdOfFive;
+	}
+
+	private void setPlayers(ArrayList<Player> players){
     	this.players = players;
     }
 
@@ -197,7 +203,6 @@ public class PairChoiceDialog extends DialogFragment implements
         LinearLayout horzLayout = (LinearLayout) boxParent.getParent();
 
         int leftOrRight = ((ViewGroup) horzLayout).indexOfChild(boxParent);
-        int index = ((ViewGroup) (boxParent)).indexOfChild(checkBox);
 
         LinearLayout otherParent = (LinearLayout) horzLayout
                 .getChildAt(1 - leftOrRight);
@@ -255,14 +260,21 @@ public class PairChoiceDialog extends DialogFragment implements
                     		 Log.d("Dialog", players.get(i) + " has played with " + players.get(j));
                     		 Log.d("Dialog", "Disabling own box " + i + "(" + players.get(i) + ")");
                     		 currentBox.setEnabled(false);
+                    		 break;
                     	 }
+                    	 if(players.get(i).nGamesAgainst(players.get(j)) == 2 && otherChecked[j] && criticalGame){
+             				Log.d("Dialog", players.get(i) + " has already playes 2 times against " + players.get(j));
+             				Log.d("Dialog", "Disabling own box " + i + "(" + players.get(i) + ")");
+             				currentBox.setEnabled(false);
+             				break;
+             			}
                      }
                      
         		}else if(otherChecked[i]){
         			// he plays in the other team => disable
         			Log.d("Dialog", players.get(i) + " is in the other team!");
         			currentBox.setEnabled(false);
-        		}else{
+        		}else {
         			// he plays in this team => enable for unchecking
         			currentBox.setEnabled(true);
         		}
@@ -288,7 +300,13 @@ public class PairChoiceDialog extends DialogFragment implements
         		for(int j = 0; j < otherChecked.length; j++){
 //        			Log.d("Dialog", "i = " + i + ", other j = " + j);
         			if(players.get(i).hasPlayedWith(players.get(j)) && otherChecked[j]){
-        				Log.d("Dialog", players.get(i) + " has played with " + players.get(index));
+        				Log.d("Dialog", players.get(i) + " has played with " + players.get(j));
+        				Log.d("Dialog", "Disabling other box " + i + "(" + players.get(i) + ")");
+        				currentOtherBox.setEnabled(false);
+        				break;
+        			}
+        			if(players.get(i).nGamesAgainst(players.get(j)) == 2 && ownChecked[j] && criticalGame){
+        				Log.d("Dialog", players.get(i) + " has already playes 2 times against " + players.get(j));
         				Log.d("Dialog", "Disabling other box " + i + "(" + players.get(i) + ")");
         				currentOtherBox.setEnabled(false);
         				break;

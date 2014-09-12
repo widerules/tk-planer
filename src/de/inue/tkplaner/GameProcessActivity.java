@@ -55,13 +55,13 @@ public class GameProcessActivity extends Activity
 	 */
 	public void choosePair(View view){
 		FragmentManager fm = getFragmentManager();
-        PairChoiceDialog choiceDialog = 
-        		PairChoiceDialog.createPairChoiceDialog(selectablePlayers);
+		Log.d("Dialog", "Starting game " + (this.gamesPlayed+1));
+        PairChoiceDialog choiceDialog = PairChoiceDialog.createPairChoiceDialog(selectablePlayers, 
+        				(this.criticalGame && this.gamesPlayed==2));
         choiceDialog.show(fm, null);
         Log.i("GameProcess", "Dialog shown...");
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void onPairChosen(boolean[] checkedPositionsLeft, 
 	                         boolean[] checkedPositionsRight){
 		Log.d("GameProcess", "Checked " + checkedPositionsLeft.length + " players");
@@ -104,27 +104,31 @@ public class GameProcessActivity extends Activity
     	}
 
     	
-    	p1 = null; p2 = null;
+    	Player p3 = null, p4 = null;
 //        index1 = -1; index2 = -1;
         for(int i = 0; i < checkedPositionsRight.length; i++){
             if(checkedPositionsRight[i]){
-                if(p1 == null){
-                    p1 = this.selectablePlayers.get(i);
-                    Log.i("GameProcess", "i = " + i + "(right): Checked P1: " + p1);
+                if(p3 == null){
+                    p3 = this.selectablePlayers.get(i);
+                    Log.i("GameProcess", "i = " + i + "(right): Checked P3: " + p3);
 //                    index1 = i;
                 }else{
                     //p1 already initialized, now p2's turn
-                    p2 = this.selectablePlayers.get(i);
-                    Log.i("GameProcess", "i = " + i + "(right): Checked P2: " + p2);
+                    p4 = this.selectablePlayers.get(i);
+                    Log.i("GameProcess", "i = " + i + "(right): Checked P4: " + p4);
 //                    index2 = i;
                 }
             }
         }
         // make a team of selected players
-        p1.newTeam(p2);
-        p2.newTeam(p1);
+        p3.newTeam(p4);
+        p4.newTeam(p3);
     	
-        currentText = currentText + (p1.getName()+"+"+p2.getName());
+        p1.newOpponent(p3, p4);
+        p2.newOpponent(p3, p4);
+        p3.newOpponent(p1, p2);
+        p4.newOpponent(p1, p2);
+        currentText = currentText + (p3.getName()+"+"+p4.getName());
     	
     	//fill the textview with text:
     	currentLine.setText(currentText);
@@ -133,11 +137,11 @@ public class GameProcessActivity extends Activity
     	currentLine.setVisibility(View.VISIBLE);
     	
     	this.gamesPlayed++;
-    	System.out.println("Critical Game? " + this.criticalGame);
-        if(!this.criticalGame){
-            // in the next game every combination can be played again
-            this.selectablePlayers = (ArrayList<Player>) allPlayers.clone();
-        }	    
+//    	System.out.println("Critical Game? " + this.criticalGame);
+//        if(!this.criticalGame){
+//            // in the next game every combination can be played again
+//            this.selectablePlayers = (ArrayList<Player>) allPlayers.clone();
+//        }	    
 	}
 	
 	/*
