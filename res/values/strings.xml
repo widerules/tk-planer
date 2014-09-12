@@ -11,7 +11,7 @@
     <string name="error_title">Fehler!</string>
     <string name="error_dummy">Some error occurred!</string>
     <string name="error_not_enough_players">Mindestens vier Spieler benötigt!</string>
-    <string name="game_add_combination">Spielerpaar wählen</string>
+    <string name="game_add_combination">Zwei Spielerpaare wählen</string>
     
     <string name="dialog_ok">OK</string>
     

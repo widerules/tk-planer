@@ -205,10 +205,12 @@ public class PairChoiceDialog extends DialogFragment implements
         boolean ownChecked[] = new boolean[boxParent.getChildCount()];
         boolean otherChecked[] = new boolean[otherParent.getChildCount()];
 
+        Log.d("Dialog", "Created ownChecked (" + ownChecked.length 
+        		+ "), other (" + otherChecked.length + ")");
         // get an overview of current situation:
         int alreadyChecked = 0;
         int otherCheckedNo = 0;
-        CheckBox currentBox;
+        CheckBox currentBox, currentOtherBox;
         for (int i = 0; i < boxParent.getChildCount(); i++) {
             currentBox = (CheckBox) boxParent.getChildAt(i);
             if (currentBox.isChecked()) {
@@ -230,47 +232,113 @@ public class PairChoiceDialog extends DialogFragment implements
         }
         Log.d("Dialog", "Checked " + otherCheckedNo + " Boxes in other column");
 
-        // make sure that not more than 2 players get in one team:
-        if (alreadyChecked == 2) {
-            for (int i = 0; i < boxParent.getChildCount(); i++) {
-                currentBox = (CheckBox) boxParent.getChildAt(i);
-                if (!ownChecked[i]) {
-                    Log.d("Dialog", "Disabling Box " + i);
+        for(int i = 0; i < boxParent.getChildCount(); i++){
+        	currentBox = (CheckBox) boxParent.getChildAt(i);
+        	currentOtherBox = (CheckBox) otherParent.getChildAt(i);
+        	// first, handle own team
+        	if (alreadyChecked == 2) {
+        		//this team is complete. Disable all other unconditionally
+        		if (!ownChecked[i]) {
+                    Log.d("Dialog", "Disabling own box " + i + "(" + players.get(i) + ")");
                     currentBox.setEnabled(false);
                 }
-            }
-        } else {
-            for (int i = 0; i < boxParent.getChildCount(); i++) {
-            	// this team is not complete. See who can be my partner
-                currentBox = (CheckBox) boxParent.getChildAt(i);
-                if (!ownChecked[i] && !otherChecked[i]) {
-                	// This one is not yet in a team
-                    Log.d("Dialog", "Enabling Box " + i);
-                    currentBox.setEnabled(true);
-                    // did he play with the just selected player?
-                    if(this.players.get(i).hasPlayedWith(this.players.get(index)) && newChecked){
-                    	// he did => disable!
-                    	Log.d("Dialog", players.get(i) + " has played with " + players.get(index));
-                        currentBox.setEnabled(false);
-                    }
+        	}else{
+        		// this team is not complete. Disable those who can't be partner
+        		if (!ownChecked[i] && !otherChecked[i]) {
+                	// This one is not yet in a team => first enable
+        			 Log.d("Dialog", "Enabling own box " + i + "(" + players.get(i) + ")");
+                     currentBox.setEnabled(true);
+        			// if he already played with another team member 
+                     for(int j = 0; j < ownChecked.length; j++){
+                    	 if(players.get(i).hasPlayedWith(players.get(j)) && ownChecked[j]){
+                    		// => disable again
+                    		 Log.d("Dialog", players.get(i) + " has played with " + players.get(j));
+                    		 Log.d("Dialog", "Disabling own box " + i + "(" + players.get(i) + ")");
+                    		 currentBox.setEnabled(false);
+                    	 }
+                     }
+                     
+        		}else if(otherChecked[i]){
+        			// he plays in the other team => disable
+        			Log.d("Dialog", players.get(i) + " is in the other team!");
+        			currentBox.setEnabled(false);
+        		}else{
+        			// he plays in this team => enable for unchecking
+        			currentBox.setEnabled(true);
+        		}
+        	} 
+        	// Now handle this player in  the other team:
+        	if(otherCheckedNo == 2){
+        		// Disable all unchecked players 
+        		// other team is complete. Disable all other unconditionally
+        		if (!otherChecked[i]) {
+                    Log.d("Dialog", "Disabling other box " + i + "(" + players.get(i) + ")");
+                    currentOtherBox.setEnabled(false);
                 }
-            }
+        	}
+        	else if(ownChecked[i]){
+        		// Disable if he is in the team of invoked box
+        		Log.d("Dialog", players.get(i) + " is in this team! Disabling other.");
+    			currentOtherBox.setEnabled(false);
+        	} else{
+        		// probably he is available
+        		Log.d("Dialog", "Enabling other box " + i + "(" + players.get(i) + ")");
+				currentOtherBox.setEnabled(true);
+        		// unless he already played with other activated player of that team
+        		for(int j = 0; j < otherChecked.length; j++){
+//        			Log.d("Dialog", "i = " + i + ", other j = " + j);
+        			if(players.get(i).hasPlayedWith(players.get(j)) && otherChecked[j]){
+        				Log.d("Dialog", players.get(i) + " has played with " + players.get(index));
+        				Log.d("Dialog", "Disabling other box " + i + "(" + players.get(i) + ")");
+        				currentOtherBox.setEnabled(false);
+        				break;
+        			}
+        		}
+        	}
+        	 
         }
-
-        // Male sure that one player is not in two teams at same time:
-        CheckBox otherCheckBox = (CheckBox) otherParent.getChildAt(index);
-        if (newChecked && otherCheckBox.isEnabled()) {
-            // This player was selectable. Disable!
-            otherCheckBox.setEnabled(false);
-            Log.d("Dialog", (leftOrRight == 1 ? "Left" : "Right")
-                    + " column disabled");
-        } else if (!newChecked && (otherCheckedNo != 2)) {
-            // This player was not selectable but the other team is not complete
-            // => Enable!
-        	otherCheckBox.setEnabled(true);
-            Log.d("Dialog", (leftOrRight == 1 ? "Left" : "Right")
-                    + " column enabled");
-        }
+        
+//        // make sure that not more than 2 players get in one team:
+//        if (alreadyChecked == 2) {
+//            for (int i = 0; i < boxParent.getChildCount(); i++) {
+//                currentBox = (CheckBox) boxParent.getChildAt(i);
+//                if (!ownChecked[i]) {
+//                    Log.d("Dialog", "Disabling Box " + i);
+//                    currentBox.setEnabled(false);
+//                }
+//            }
+//        } else {
+//            for (int i = 0; i < boxParent.getChildCount(); i++) {
+//            	// this team is not complete. See who can be my partner
+//                currentBox = (CheckBox) boxParent.getChildAt(i);
+//                if (!ownChecked[i] && !otherChecked[i]) {
+//                	// This one is not yet in a team
+//                    Log.d("Dialog", "Enabling Box " + i);
+//                    currentBox.setEnabled(true);
+//                    // did he play with the just selected player?
+//                    if(this.players.get(i).hasPlayedWith(this.players.get(index)) && newChecked){
+//                    	// he did => disable!
+//                    	Log.d("Dialog", players.get(i) + " has played with " + players.get(index));
+//                        currentBox.setEnabled(false);
+//                    }
+//                }
+//            }
+//        }
+//
+//        // Male sure that one player is not in two teams at same time:
+//        CheckBox otherCheckBox = (CheckBox) otherParent.getChildAt(index);
+//        if (newChecked && otherCheckBox.isEnabled()) {
+//            // This player was selectable. Disable!
+//            otherCheckBox.setEnabled(false);
+//            Log.d("Dialog", (leftOrRight == 1 ? "Left" : "Right")
+//                    + " column disabled");
+//        } else if (!newChecked && (otherCheckedNo != 2)) {
+//            // This player was not selectable but the other team is not complete
+//            // => Enable!
+//        	otherCheckBox.setEnabled(true);
+//            Log.d("Dialog", (leftOrRight == 1 ? "Left" : "Right")
+//                    + " column enabled");
+//        }
 
     }
 }
